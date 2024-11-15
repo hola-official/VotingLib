@@ -6,9 +6,15 @@ async function main() {
 
     const [owner, voter1, voter2, voter3] = await hre.ethers.getSigners();
 
-    const Voting = await hre.ethers.getContractFactory("Voting");
+    const VotingLib = await hre.ethers.getContractFactory("VotingLib");
+    const votingLib = await VotingLib.deploy();
+    const votingLibAddress = await votingLib.getAddress();
+    const Voting = await hre.ethers.getContractFactory("Voting", {
+      libraries: {
+        VotingLib: votingLibAddress,
+      },
+    });
     const voting = await Voting.deploy();
-    await voting.waitForDeployment();
     const votingAddress = await voting.getAddress();
 
     console.log(`Voting Contract deployed to: ${votingAddress}`);
